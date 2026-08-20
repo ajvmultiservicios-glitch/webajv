@@ -1,0 +1,79 @@
+---
+/**
+ * Listado de servicios (desde la colección de contenido, ordenados por "orden")
+ * + trabajos destacados agrupados por categoría (SITE.productos).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import ServicioCard from '@/components/ServicioCard.astro';
+import ProductoCard from '@/components/ProductoCard.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '@/config/site';
+
+const servicios = (await getCollection('servicios', ({ data }) => data.publicado))
+  .sort((a, b) => a.data.orden - b.data.orden)
+  .map((s) => ({
+    slug: s.id,
+    titulo: s.data.titulo,
+    descripcion: s.data.resumen,
+    icono: s.data.icono,
+  }));
+
+// Trabajos destacados agrupados por categoría (respetando el orden de aparición)
+const categorias = [...new Set(SITE.productos.map((p) => p.categoria))];
+---
+
+<BaseLayout
+  title="Servicios"
+  description={`Servicios metalmecánicos de ${SITE.nombre}: diseño e ingeniería, fabricación, montaje, reparación y blindaje, y mecanizado para industria y minería.`}
+>
+  <PageHeader
+    titulo="Servicios que realizamos"
+    descripcion="Del diseño en Tekla y ANSYS al montaje en obra: soluciones metalmecánicas completas para industria y minería."
+  />
+
+  <section class="seccion fondo-hex">
+    <div class="contenedor">
+      <div class="flex flex-wrap justify-center gap-6">
+        {servicios.map((s) => (
+          <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]">
+            <ServicioCard servicio={s} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Trabajos destacados (banda oscura, estilo brochure) -->
+  <section id="proyectos" class="banda-diagonal bg-fondo-oscuro fondo-hex-claro text-white scroll-mt-24" style="clip-path: polygon(0 3rem, 100% 0, 100% 100%, 0 100%); margin-bottom: 0;">
+    <div class="contenedor">
+      <SectionHeading
+        etiqueta="Trabajos destacados"
+        titulo="Así aplicamos nuestros servicios"
+        descripcion="Una muestra de proyectos ejecutados: reparación y blindaje de componentes mineros, fabricación de estructuras, montaje de coberturas y mecanizado in situ."
+        claro
+      />
+      <div class="mt-14 space-y-16">
+        {categorias.map((c) => (
+          <div>
+            <h3 class="font-titulo text-xl font-bold !text-secundario-400">{c}</h3>
+            <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {SITE.productos
+                .filter((p) => p.categoria === c)
+                .map((p) => (
+                  <ProductoCard producto={p} />
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    titulo="¿Necesitas un servicio a la medida?"
+    descripcion="Escríbenos y coordinamos una visita técnica para evaluar tu proyecto."
+  />
+</BaseLayout>

@@ -1,0 +1,42 @@
+---
+/**
+ * Preguntas frecuentes completas (con JSON-LD FAQPage para SEO).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { SITE } from '@/config/site';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: SITE.faq.map((f) => ({
+    '@type': 'Question',
+    name: f.pregunta,
+    acceptedAnswer: { '@type': 'Answer', text: f.respuesta },
+  })),
+};
+---
+
+<BaseLayout
+  title="Preguntas frecuentes"
+  description={`Respuestas a las preguntas más comunes sobre los servicios metalmecánicos de ${SITE.nombre}.`}
+  jsonLd={jsonLd}
+>
+  <PageHeader
+    titulo="Preguntas frecuentes"
+    descripcion="Resolvemos las dudas más comunes sobre nuestros servicios. ¿No encuentras tu respuesta? Escríbenos."
+  />
+
+  <section class="seccion fondo-hex">
+    <div class="contenedor max-w-3xl">
+      <Faq />
+    </div>
+  </section>
+
+  <CtaBand
+    titulo="¿Tienes otra pregunta?"
+    descripcion="Contáctanos y te responderemos en menos de 24 horas hábiles."
+  />
+</BaseLayout>

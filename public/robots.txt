@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: reemplazar por el dominio final
+Sitemap: https://www.jvc.com.pe/sitemap-index.xml

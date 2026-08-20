@@ -1,0 +1,120 @@
+---
+/**
+ * Página "Nosotros": quiénes somos, misión/visión, valores, historia y CTA.
+ * (La sección de personal vive en /equipo/.)
+ */
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import StatsBand from '@/components/StatsBand.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { SITE } from '@/config/site';
+import nosotrosImg from '@/assets/nosotros.jpg';
+
+---
+
+<BaseLayout
+  title="Nosotros"
+  description={`Conoce a ${SITE.nombre}: empresa peruana dedicada a proyectos metalmecánicos para los sectores industrial y minero, con la meta permanente de CERO ACCIDENTES.`}
+>
+  <PageHeader
+    titulo="Nuestra empresa"
+    descripcion="Proyectos metalmecánicos para los sectores más importantes de la industria y la minería."
+  />
+
+  <!-- Quiénes somos -->
+  <section class="seccion fondo-hex">
+    <div class="contenedor grid items-center gap-12 lg:grid-cols-2">
+      <div class="revelar">
+        <SectionHeading
+          etiqueta="Quiénes somos"
+          titulo="Ingeniería metalmecánica con seguridad garantizada"
+          alinear="izquierda"
+        />
+        <div class="mt-6 space-y-4 text-tinta-suave leading-relaxed">
+          <p>
+            Nos dedicamos a realizar proyectos en el ámbito <strong>metalmecánico</strong> para los
+            sectores más importantes de la industria, mediante la constante innovación en tecnología,
+            en el talento humano, en los procedimientos y en la consideración del entorno natural.
+          </p>
+          <p>
+            En {SITE.nombre.toUpperCase()} disponemos de <strong>políticas, procedimientos y protocolos</strong> que
+            han sido diseñados y verificados en diversas plantas e industrias. Esto nos facilita un
+            desarrollo eficaz y seguro en todas nuestras operaciones, apoyando a nuestros clientes en
+            alcanzar sus metas en cuanto a calidad, costo y tiempo, garantizando
+            <strong>CERO ACCIDENTES</strong>.
+          </p>
+        </div>
+      </div>
+      <div class="revelar flex justify-center drop-shadow-2xl">
+        <div class="hexagono w-full max-w-md bg-white p-2.5">
+          <Image
+            src={nosotrosImg}
+            alt="Estructura metálica de nave industrial fabricada por AJV"
+            width={800}
+            height={880}
+            class="hexagono h-full w-full"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <StatsBand />
+
+  <!-- Misión y visión (banda oscura diagonal) -->
+  <section class="banda-diagonal bg-fondo-oscuro fondo-hex-claro text-white">
+    <div class="contenedor grid gap-8 md:grid-cols-2">
+      <div class="tarjeta revelar p-8">
+        <Icon name="mdi:target-arrow" class="size-12 text-secundario-500" aria-hidden="true" />
+        <h2 class="mt-4 text-2xl font-bold">Misión</h2>
+        <p class="mt-3 leading-relaxed text-tinta-suave">{SITE.mision}</p>
+      </div>
+      <div class="tarjeta revelar p-8">
+        <Icon name="mdi:eye-outline" class="size-12 text-secundario-500" aria-hidden="true" />
+        <h2 class="mt-4 text-2xl font-bold">Visión</h2>
+        <p class="mt-3 leading-relaxed text-tinta-suave">{SITE.vision}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Valores -->
+  <section class="seccion fondo-hex">
+    <div class="contenedor">
+      <SectionHeading etiqueta="Nuestros valores" titulo="Lo que nos define" />
+      <div class="mt-12 flex flex-wrap justify-center gap-6">
+        {SITE.valores.map((v) => (
+          <div class="tarjeta revelar p-6 !bg-primario-800 !border-white/15 w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]">
+            <Icon name={v.icono} class="size-10 text-white" aria-hidden="true" />
+            <h3 class="mt-3 text-lg font-bold !text-white">{v.titulo}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-white/75">{v.descripcion}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Historia -->
+  <section class="seccion bg-fondo-suave">
+    <div class="contenedor max-w-3xl">
+      <SectionHeading etiqueta="Nuestra historia" titulo="Cómo hemos crecido" />
+      <ol class="relative mt-12 space-y-10 border-s-2 border-primario-200 ps-8">
+        {SITE.historia.map((h) => (
+          <li class="revelar relative">
+            <span class="absolute -start-[41px] top-1 size-4 rounded-full border-4 border-secundario-500 bg-white" aria-hidden="true"></span>
+            <span class="font-titulo text-sm font-bold text-secundario-600">{h.anio}</span>
+            <h3 class="mt-1 text-lg font-bold">{h.titulo}</h3>
+            <p class="mt-1 text-sm leading-relaxed text-tinta-suave">{h.descripcion}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand
+    titulo="¿Listo para trabajar con nosotros?"
+    descripcion="Cuéntanos tu proyecto y te enviaremos una propuesta a la medida."
+  />
+</BaseLayout>

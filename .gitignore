@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+
+# Salida de build
+dist/
+.output/
+
+# Archivos generados por Astro
+.astro/
+
+# Vercel
+.vercel/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

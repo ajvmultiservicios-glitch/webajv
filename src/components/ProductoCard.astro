@@ -1,0 +1,65 @@
+---
+/**
+ * Tarjeta de producto / repuesto. Si el producto tiene `imagen`
+ * (archivo dentro de src/assets/productos/), la muestra optimizada con <Image>;
+ * si no, muestra el icono.
+ */
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { Producto } from '@/config/site';
+import { SITE } from '@/config/site';
+
+export interface Props {
+  producto: Producto;
+  retardo?: number;
+  /** true = tarjeta gris oscura (mismo gris del header/footer). */
+  oscuro?: boolean;
+  /** Clases extra. */
+  class?: string;
+}
+
+const { producto, retardo = 0, oscuro = false, class: clase } = Astro.props;
+
+// Carga perezosa de todas las imágenes de productos (solo se incluyen las usadas)
+const imagenes = import.meta.glob<{ default: ImageMetadata }>('/src/assets/productos/*.{jpg,jpeg,png,webp,avif}');
+const ruta = producto.imagen ? `/src/assets/productos/${producto.imagen}` : null;
+const imagen = ruta && imagenes[ruta] ? (await imagenes[ruta]()).default : null;
+
+const urlCotizar = `https://wa.me/${SITE.whatsapp.numero}?text=${encodeURIComponent(`Hola, quisiera cotizar: ${producto.nombre}`)}`;
+---
+
+<article class:list={['tarjeta revelar group flex h-full flex-col overflow-hidden', oscuro && '!bg-primario-800 !border-white/15', clase]} style={`transition-delay:${retardo}ms`} id={producto.id}>
+  <div class="relative aspect-[4/3] overflow-hidden bg-primario-50">
+    {imagen ? (
+      <Image
+        src={imagen}
+        alt={producto.nombre}
+        width={600}
+        height={450}
+        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+      />
+    ) : (
+      <div class="flex h-full w-full items-center justify-center text-primario-300">
+        <Icon name={producto.icono} class="size-20" aria-hidden="true" />
+      </div>
+    )}
+    <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primario-700 shadow-sm">
+      {producto.categoria}
+    </span>
+  </div>
+  <div class="flex flex-1 flex-col p-5">
+    <h3 class:list={['text-lg', oscuro && '!text-white']}>{producto.nombre}</h3>
+    <p class:list={['mt-2 flex-1 text-sm leading-relaxed', oscuro ? 'text-white/75' : 'text-tinta-suave']}>{producto.descripcion}</p>
+    <a
+      href={urlCotizar}
+      target="_blank"
+      rel="noopener noreferrer"
+      class:list={['mt-4', oscuro ? 'btn btn-secundario self-start !px-4 !py-2 !text-sm' : 'inline-flex items-center gap-1.5 font-titulo text-sm font-bold text-secundario-600 hover:text-secundario-500']}
+    >
+      <Icon name="mdi:whatsapp" class="size-4" aria-hidden="true" />
+      Cotizar este producto
+    </a>
+  </div>
+</article>

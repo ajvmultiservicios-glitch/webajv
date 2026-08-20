@@ -1,0 +1,106 @@
+---
+/**
+ * Detalle de un servicio (contenido Markdown de src/content/servicios/).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import ServicioCard from '@/components/ServicioCard.astro';
+import { Icon } from 'astro-icon/components';
+import { getCollection, render } from 'astro:content';
+import { SITE, WHATSAPP_URL } from '@/config/site';
+
+export async function getStaticPaths() {
+  const servicios = await getCollection('servicios', ({ data }) => data.publicado);
+  return servicios.map((servicio) => ({
+    params: { slug: servicio.id },
+    props: { servicio },
+  }));
+}
+
+const { servicio } = Astro.props;
+const { Content } = await render(servicio);
+
+// Otros servicios para la sección "También te puede interesar"
+const otros = (await getCollection('servicios', ({ data }) => data.publicado))
+  .filter((s) => s.id !== servicio.id)
+  .sort((a, b) => a.data.orden - b.data.orden)
+  .slice(0, 3)
+  .map((s) => ({
+    slug: s.id,
+    titulo: s.data.titulo,
+    descripcion: s.data.resumen,
+    icono: s.data.icono,
+  }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: servicio.data.titulo,
+  description: servicio.data.resumen,
+  provider: { '@type': 'Organization', name: SITE.nombre },
+  areaServed: 'PE',
+};
+---
+
+<BaseLayout title={servicio.data.titulo} description={servicio.data.resumen} jsonLd={jsonLd}>
+  <PageHeader
+    titulo={servicio.data.titulo}
+    descripcion={servicio.data.resumen}
+    migas={[{ label: 'Servicios', href: '/servicios/' }]}
+  />
+
+  <section class="seccion fondo-hex">
+    <div class="contenedor grid gap-12 lg:grid-cols-3">
+      <!-- Contenido -->
+      <article class="prosa lg:col-span-2">
+        <Content />
+      </article>
+
+      <!-- Aside: beneficios + contacto -->
+      <aside class="space-y-6">
+        {servicio.data.beneficios.length > 0 && (
+          <div class="tarjeta p-6">
+            <h2 class="text-lg font-bold">Beneficios</h2>
+            <ul class="mt-4 space-y-3">
+              {servicio.data.beneficios.map((b) => (
+                <li class="flex items-start gap-2 text-sm leading-relaxed text-tinta-suave">
+                  <Icon name="mdi:check-circle" class="mt-0.5 size-5 shrink-0 text-secundario-500" aria-hidden="true" />
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div class="tarjeta bg-primario-800 p-6 text-white">
+          <h2 class="text-lg font-bold">¿Te interesa este servicio?</h2>
+          <p class="mt-2 text-sm leading-relaxed text-primario-100">
+            Escríbenos y recibe una cotización sin compromiso.
+          </p>
+          <div class="mt-4 flex flex-col gap-3">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener" class="btn btn-secundario">
+              <Icon name="mdi:whatsapp" class="size-5" aria-hidden="true" />
+              Cotizar por WhatsApp
+            </a>
+            <a href="/contacto/" class="btn btn-contorno-claro">Formulario de contacto</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {otros.length > 0 && (
+    <section class="seccion bg-fondo-suave">
+      <div class="contenedor">
+        <h2 class="text-center font-titulo text-2xl font-bold">También te puede interesar</h2>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {otros.map((s) => (
+            <ServicioCard servicio={s} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand />
+</BaseLayout>

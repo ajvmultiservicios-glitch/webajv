@@ -1,0 +1,60 @@
+---
+/**
+ * Video institucional de YouTube con carga diferida ("facade"): solo se
+ * inserta el iframe cuando el usuario hace clic en reproducir, lo que evita
+ * descargar el reproductor de YouTube al cargar la página (mejor Lighthouse).
+ * No se muestra nada si SITE.videoYoutubeId está vacío.
+ */
+import { Icon } from 'astro-icon/components';
+import { SITE } from '@/config/site';
+import SectionHeading from '@/components/SectionHeading.astro';
+
+const id = SITE.videoYoutubeId;
+---
+
+{id && (
+  <section class="seccion bg-fondo-suave">
+    <div class="contenedor">
+      <SectionHeading etiqueta="Conócenos" titulo="Mira cómo trabajamos" descripcion="Un recorrido por nuestras instalaciones, equipo y proyectos." />
+      <div class="revelar mx-auto mt-10 max-w-4xl">
+        <div
+          class="relative aspect-video overflow-hidden rounded-marca-lg bg-primario-900 shadow-xl"
+          data-video={id}
+        >
+          <img
+            src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+            alt={`Video institucional de ${SITE.nombreCorto}`}
+            class="h-full w-full object-cover"
+            loading="lazy"
+            width="1280"
+            height="720"
+          />
+          <button
+            type="button"
+            class="absolute inset-0 flex items-center justify-center bg-black/30 transition hover:bg-black/40"
+            aria-label="Reproducir video"
+            data-reproducir
+          >
+            <span class="inline-flex size-20 items-center justify-center rounded-full bg-secundario-500 text-primario-900 shadow-lg transition-transform hover:scale-110">
+              <Icon name="mdi:play" class="size-10" aria-hidden="true" />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((caja) => {
+    caja.querySelector('[data-reproducir]')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${caja.dataset.video}?autoplay=1&rel=0`;
+      iframe.title = 'Video institucional';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.className = 'absolute inset-0 h-full w-full';
+      caja.replaceChildren(iframe);
+    });
+  });
+</script>

@@ -1,0 +1,123 @@
+---
+/**
+ * Página de inicio: hero, servicios, cifras, proyectos destacados,
+ * carrusel de fotos, video institucional, FAQ resumido y CTA.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import ServicioCard from '@/components/ServicioCard.astro';
+import StatsBand from '@/components/StatsBand.astro';
+import ProductoCard from '@/components/ProductoCard.astro';
+import CarruselFotos from '@/components/CarruselFotos.astro';
+import ClientesMarquee from '@/components/ClientesMarquee.astro';
+import VideoEmpresa from '@/components/VideoEmpresa.astro';
+import Faq from '@/components/Faq.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { Icon } from 'astro-icon/components';
+import { SITE } from '@/config/site';
+
+const proyectosDestacados = SITE.productos.slice(0, 3);
+---
+
+<BaseLayout
+  title={`${SITE.nombre} — ${SITE.eslogan}`}
+  description={SITE.descripcion}
+  tituloCompleto
+>
+  <Hero />
+
+  <StatsBand />
+
+  <!-- Servicios (banda oscura diagonal) -->
+  <section class="banda-diagonal bg-fondo-oscuro fondo-hex-claro text-white">
+    <div class="contenedor">
+      <SectionHeading
+        etiqueta="Servicios que realizamos"
+        titulo="Soluciones metalmecánicas integrales"
+        descripcion="Del diseño en Tekla y ANSYS al montaje en obra: cubrimos todo el ciclo de vida de tus estructuras y componentes."
+        claro
+      />
+      <div class="mt-12 flex flex-wrap justify-center gap-6">
+        {SITE.servicios.map((s) => (
+          <div class="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]">
+            <ServicioCard servicio={s} claro />
+          </div>
+        ))}
+      </div>
+      <div class="mt-10 text-center">
+        <a href="/servicios/" class="btn btn-secundario">
+          Ver todos los servicios
+          <Icon name="mdi:arrow-right" class="size-5" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proyectos destacados -->
+  <section class="seccion fondo-hex">
+    <div class="contenedor">
+      <SectionHeading
+        etiqueta="Proyectos"
+        titulo="Trabajos que hablan por nosotros"
+        descripcion="Reparación y blindaje de componentes mineros, fabricación de estructuras y mecanizado in situ."
+      />
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {proyectosDestacados.map((p) => (
+          <ProductoCard producto={p} oscuro />
+        ))}
+      </div>
+      <div class="mt-10 text-center">
+        <a href="/servicios/#proyectos" class="btn btn-primario">
+          Ver más trabajos
+          <Icon name="mdi:arrow-right" class="size-5" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Carrusel de fotos (banda oscura, hexágonos estilo brochure) -->
+  <section class="banda-diagonal bg-fondo-oscuro fondo-hex-claro text-white">
+    <div class="contenedor">
+      <SectionHeading
+        etiqueta="Galería"
+        titulo="Nuestro trabajo en imágenes"
+        claro
+      />
+      <div class="mt-12">
+        <CarruselFotos maximo={8} claro />
+      </div>
+    </div>
+  </section>
+
+  {SITE.clientes.length > 0 && (
+    <section class="seccion bg-fondo-suave">
+      <div class="contenedor">
+        <SectionHeading etiqueta="Confían en nosotros" titulo="Nuestros clientes" />
+        <div class="mt-10">
+          <ClientesMarquee />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <VideoEmpresa />
+
+  <!-- FAQ resumido -->
+  <section class="seccion fondo-hex">
+    <div class="contenedor max-w-3xl">
+      <SectionHeading
+        etiqueta="Preguntas frecuentes"
+        titulo="Resolvemos tus dudas"
+      />
+      <div class="mt-10">
+        <Faq maximo={4} />
+      </div>
+      <div class="mt-8 text-center">
+        <a href="/faq/" class="btn btn-contorno">Ver todas las preguntas</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

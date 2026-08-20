@@ -1,0 +1,36 @@
+---
+/**
+ * Marquee infinito con los logos de clientes (CSS puro, se pausa al pasar el
+ * cursor y respeta prefers-reduced-motion). Si un cliente no tiene logo,
+ * se muestra su nombre en texto.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { SITE } from '@/config/site';
+
+const logos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/clientes/*.{jpg,jpeg,png,webp,svg,avif}');
+const clientes = await Promise.all(
+  SITE.clientes.map(async (c) => {
+    const cargar = c.logo ? logos[`/src/assets/clientes/${c.logo}`] : undefined;
+    return { ...c, src: cargar ? (await cargar()).default : null };
+  }),
+);
+// Se duplica la lista para que el desplazamiento sea continuo
+const lista = [...clientes, ...clientes];
+---
+
+<div class="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+  <ul class="flex w-max animate-marquee items-center gap-12 group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:w-full" aria-label="Clientes">
+    {lista.map((c, i) => (
+      <li class="flex h-16 w-40 shrink-0 items-center justify-center" aria-hidden={i >= clientes.length ? 'true' : undefined}>
+        {c.src ? (
+          <Image src={c.src} alt={c.nombre} height={56} class="max-h-14 w-auto object-contain grayscale transition hover:grayscale-0" loading="lazy" />
+        ) : (
+          <span class="rounded-marca border border-dashed border-primario-200 px-4 py-3 font-titulo text-sm font-bold text-primario-300">
+            {c.nombre}
+          </span>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>

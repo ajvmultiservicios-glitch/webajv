@@ -1,0 +1,38 @@
+---
+/**
+ * Páginas legales (contenido Markdown de src/content/politicas/).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const politicas = await getCollection('politicas');
+  return politicas.map((politica) => ({
+    params: { slug: politica.id },
+    props: { politica },
+  }));
+}
+
+const { politica } = Astro.props;
+const { Content } = await render(politica);
+
+const fecha = politica.data.actualizado.toLocaleDateString('es-PE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={politica.data.titulo} description={politica.data.descripcion} noindex>
+  <PageHeader titulo={politica.data.titulo} descripcion={politica.data.descripcion} />
+
+  <section class="seccion">
+    <div class="contenedor max-w-3xl">
+      <p class="mb-8 text-sm text-tinta-suave">Última actualización: {fecha}</p>
+      <article class="prosa">
+        <Content />
+      </article>
+    </div>
+  </section>
+</BaseLayout>

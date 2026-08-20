@@ -1,0 +1,56 @@
+---
+/**
+ * Encabezado de sección: etiqueta pequeña, título y descripción opcional.
+ */
+export interface Props {
+  /** Etiqueta corta sobre el título (p. ej. "Nuestros servicios"). */
+  etiqueta?: string;
+  /** Título principal de la sección. */
+  titulo: string;
+  /** Texto descriptivo opcional. */
+  descripcion?: string;
+  /** Alineación. */
+  alinear?: 'centro' | 'izquierda';
+  /** Nivel de encabezado HTML. */
+  nivel?: 'h1' | 'h2' | 'h3';
+  /** Variante clara para fondos oscuros. */
+  claro?: boolean;
+  class?: string;
+}
+
+const {
+  etiqueta,
+  titulo,
+  descripcion,
+  alinear = 'centro',
+  nivel = 'h2',
+  claro = false,
+  class: clase = '',
+} = Astro.props;
+
+const Etiqueta = nivel;
+---
+
+<div
+  class:list={[
+    'revelar max-w-3xl',
+    alinear === 'centro' ? 'mx-auto text-center' : 'text-left',
+    clase,
+  ]}
+>
+  {etiqueta && (
+    <p class:list={['mb-2 inline-flex items-center gap-2 font-titulo text-sm font-bold uppercase tracking-widest', claro ? 'text-white' : 'text-secundario-600']}>
+      <span class="h-0.5 w-6 bg-current" aria-hidden="true"></span>
+      {etiqueta}
+      {alinear === 'centro' && <span class="h-0.5 w-6 bg-current" aria-hidden="true"></span>}
+    </p>
+  )}
+  <Etiqueta class:list={['text-3xl sm:text-4xl lg:text-[2.6rem]', claro && '!text-secundario-400']}>
+    {titulo}
+  </Etiqueta>
+  {descripcion && (
+    <p class:list={['mt-4 text-lg leading-relaxed', claro ? 'text-white/80' : 'text-tinta-suave']}>
+      {descripcion}
+    </p>
+  )}
+</div>

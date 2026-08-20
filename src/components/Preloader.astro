@@ -1,0 +1,63 @@
+---
+/**
+ * Preloader ligero: cubre la pantalla hasta que la página termina de cargar.
+ * Muestra el logo de la empresa y se oculta con window.load
+ * (o a los 2,5 s como máximo, por seguridad).
+ */
+import { Image } from 'astro:assets';
+import { SITE } from '@/config/site';
+import logoIcono from '@/assets/logo-icono.png';
+---
+
+<div
+  id="preloader"
+  class="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-5 bg-fondo transition-opacity duration-500"
+  aria-hidden="true"
+>
+  <Image
+    src={logoIcono}
+    alt={`Logo de ${SITE.nombreCorto}`}
+    width={280}
+    height={76}
+    densities={[1, 2, 3]}
+    quality={90}
+    class="w-56 sm:w-64 animate-pulso"
+    loading="eager"
+  />
+  <span class="block h-1 w-32 overflow-hidden rounded-full bg-primario-100">
+    <span class="block h-full w-1/3 rounded-full bg-secundario-500 barra"></span>
+  </span>
+</div>
+
+<style>
+  .barra {
+    animation: deslizar 1s ease-in-out infinite;
+  }
+  @keyframes deslizar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+  .animate-pulso {
+    animation: pulso 1.4s ease-in-out infinite;
+  }
+  @keyframes pulso {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.75; transform: scale(0.97); }
+  }
+  #preloader.oculto {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const pre = document.getElementById('preloader');
+  const ocultar = () => {
+    if (!pre) return;
+    pre.classList.add('oculto');
+    setTimeout(() => pre.remove(), 600);
+  };
+  if (document.readyState === 'complete') ocultar();
+  else window.addEventListener('load', ocultar, { once: true });
+  setTimeout(ocultar, 2500);
+</script>

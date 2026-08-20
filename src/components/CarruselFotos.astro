@@ -1,0 +1,90 @@
+---
+/**
+ * Carrusel horizontal de fotos (scroll-snap nativo, sin librerías) con
+ * botones anterior/siguiente y apertura en lightbox (ver Lightbox.astro).
+ * Usado en la página de inicio; la galería completa usa Galeria.astro.
+ */
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { SITE } from '@/config/site';
+import Lightbox from '@/components/Lightbox.astro';
+
+export interface Props {
+  /** Cantidad máxima de fotos a mostrar (por defecto todas). */
+  maximo?: number;
+  id?: string;
+  /** Si se indica, solo muestra fotos de esta categoría. */
+  categoria?: string;
+  /** true = botones claros (para bandas oscuras); false = botones oscuros. */
+  claro?: boolean;
+}
+
+const { maximo, id = 'carrusel', categoria, claro = false } = Astro.props;
+
+const lista = categoria ? SITE.galeria.filter((f) => f.categoria === categoria) : SITE.galeria;
+
+const archivos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/galeria/*.{jpg,jpeg,png,webp,avif}');
+const fotos = await Promise.all(
+  lista.slice(0, maximo).map(async (f) => {
+    const cargar = archivos[`/src/assets/galeria/${f.archivo}`];
+    if (!cargar) return null;
+    return { ...f, src: (await cargar()).default };
+  }),
+).then((lista) => lista.filter((f): f is NonNullable<typeof f> => f !== null));
+---
+
+<div class="relative" data-carrusel={id}>
+  <ul
+    class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:thin]"
+    aria-label="Galería de fotos"
+  >
+    {fotos.map((f, i) => (
+      <li class="w-[80%] shrink-0 snap-start sm:w-[46%] lg:w-[31%]">
+        <button
+          type="button"
+          class="group relative block aspect-[4/3] w-full overflow-hidden drop-shadow-lg"
+          data-lightbox={id}
+          data-indice={i}
+          aria-label={`Ampliar foto: ${f.alt}`}
+        >
+          <Image
+            src={f.src}
+            alt={f.alt}
+            width={640}
+            height={480}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <span class="absolute inset-0 flex items-end bg-gradient-to-t from-black/65 to-transparent p-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+            <span class="text-sm font-semibold text-white">{f.categoria}</span>
+          </span>
+        </button>
+      </li>
+    ))}
+  </ul>
+
+  <div class="mt-3 flex justify-end gap-2">
+    <button type="button" class:list={['btn !p-2.5', claro ? 'btn-contorno-claro' : 'btn-contorno']} data-dir="-1" aria-label="Anterior">
+      <Icon name="mdi:chevron-left" class="size-5" aria-hidden="true" />
+    </button>
+    <button type="button" class:list={['btn !p-2.5', claro ? 'btn-contorno-claro' : 'btn-contorno']} data-dir="1" aria-label="Siguiente">
+      <Icon name="mdi:chevron-right" class="size-5" aria-hidden="true" />
+    </button>
+  </div>
+
+  <Lightbox id={id} fotos={fotos.map((f) => ({ src: f.src, alt: f.alt }))} />
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carrusel]').forEach((c) => {
+    const pista = c.querySelector<HTMLElement>('ul');
+    c.querySelectorAll<HTMLButtonElement>('[data-dir]').forEach((b) => {
+      b.addEventListener('click', () => {
+        if (!pista) return;
+        const ancho = pista.querySelector('li')?.getBoundingClientRect().width ?? 300;
+        pista.scrollBy({ left: Number(b.dataset.dir) * (ancho + 16), behavior: 'smooth' });
+      });
+    });
+  });
+</script>

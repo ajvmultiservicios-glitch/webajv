@@ -1,0 +1,35 @@
+---
+/** Tarjeta de servicio con icono, título, descripción y enlace al detalle. */
+import { Icon } from 'astro-icon/components';
+import type { Servicio } from '@/config/site';
+
+export interface Props {
+  servicio: Pick<Servicio, 'slug' | 'titulo' | 'descripcion' | 'icono'>;
+  /** true = tarjeta blanca (para bandas oscuras); por defecto azul corporativo. */
+  claro?: boolean;
+  /** Retardo de la animación (ms) para escalonar la aparición. */
+  retardo?: number;
+}
+
+const { servicio, retardo = 0, claro = false } = Astro.props;
+---
+
+<article class:list={['tarjeta revelar group flex h-full flex-col p-6 sm:p-7', !claro && '!bg-primario-800 !border-white/15']} style={`transition-delay:${retardo}ms`}>
+  <span class:list={['inline-flex size-14 items-center justify-center rounded-marca transition-colors', claro ? 'bg-primario-50 text-primario-700 group-hover:bg-primario-700 group-hover:text-white' : 'bg-white/10 text-white group-hover:bg-secundario-500 group-hover:text-primario-900']}>
+    <Icon name={servicio.icono} class="size-8" aria-hidden="true" />
+  </span>
+  <h3 class:list={['mt-5 text-xl', !claro && '!text-white']}>
+    <a href={`/servicios/${servicio.slug}/`} class="after:absolute after:inset-0 focus-visible:outline-none">
+      {servicio.titulo}
+    </a>
+  </h3>
+  <p class:list={['mt-2 flex-1 leading-relaxed', claro ? 'text-tinta-suave' : 'text-white/75']}>{servicio.descripcion}</p>
+  <span class:list={['mt-5 inline-flex items-center gap-1 font-titulo text-sm font-bold', claro ? 'text-primario-700 group-hover:text-secundario-600' : 'text-secundario-400 group-hover:text-secundario-300']}>
+    Ver detalle
+    <Icon name="mdi:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+  </span>
+</article>
+
+<style>
+  article { position: relative; }
+</style>

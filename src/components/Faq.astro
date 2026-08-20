@@ -1,0 +1,27 @@
+---
+/**
+ * Acordeón de preguntas frecuentes con <details>/<summary> (accesible y sin JS
+ * obligatorio). Los datos provienen de SITE.faq.
+ */
+import { Icon } from 'astro-icon/components';
+import { SITE } from '@/config/site';
+
+export interface Props {
+  /** Cantidad máxima de preguntas (por defecto todas). */
+  maximo?: number;
+}
+const { maximo } = Astro.props;
+const preguntas = SITE.faq.slice(0, maximo);
+---
+
+<div class="mx-auto max-w-3xl divide-y divide-borde esquina-cortada border border-borde bg-fondo-suave">
+  {preguntas.map((p, i) => (
+    <details class="group revelar" name="faq" open={i === 0}>
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-titulo font-bold text-primario-800 marker:content-none [&::-webkit-details-marker]:hidden hover:text-primario-600">
+        <span>{p.pregunta}</span>
+        <Icon name="mdi:chevron-down" class="size-6 shrink-0 text-secundario-600 transition-transform group-open:rotate-180" aria-hidden="true" />
+      </summary>
+      <p class="px-5 pb-5 leading-relaxed text-tinta-suave">{p.respuesta}</p>
+    </details>
+  ))}
+</div>

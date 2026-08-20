@@ -1,0 +1,35 @@
+---
+/** Cabecera de páginas interiores: título, descripción y migas de pan. */
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  titulo: string;
+  descripcion?: string;
+  /** Migas de pan: [{ label, href }] sin incluir "Inicio" ni la página actual. */
+  migas?: { label: string; href: string }[];
+}
+const { titulo, descripcion, migas = [] } = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden bg-primario-800 text-white">
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgb(242_159_5/0.25),transparent_55%)]" aria-hidden="true"></div>
+  <div class="contenedor py-14 lg:py-20">
+    <nav aria-label="Migas de pan" class="mb-4 text-sm text-white/70">
+      <ol class="flex flex-wrap items-center gap-1">
+        <li class="flex items-center gap-1">
+          <a href="/" class="hover:text-white">Inicio</a>
+          <Icon name="mdi:chevron-right" class="size-4" aria-hidden="true" />
+        </li>
+        {migas.map((m) => (
+          <li class="flex items-center gap-1">
+            <a href={m.href} class="hover:text-white">{m.label}</a>
+            <Icon name="mdi:chevron-right" class="size-4" aria-hidden="true" />
+          </li>
+        ))}
+        <li aria-current="page" class="font-semibold text-white">{titulo}</li>
+      </ol>
+    </nav>
+    <h1 class="text-4xl font-extrabold !text-secundario-400 sm:text-5xl">{titulo}</h1>
+    {descripcion && <p class="mt-4 max-w-2xl text-lg text-white/80">{descripcion}</p>}
+  </div>
+</section>

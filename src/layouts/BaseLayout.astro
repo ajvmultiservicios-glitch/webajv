@@ -1,0 +1,178 @@
+---
+/**
+ * Layout base de todas las páginas.
+ * Incluye: <head> con SEO completo (title, description, canonical, Open Graph,
+ * Twitter Card, JSON-LD Organization/LocalBusiness), Header, Footer,
+ * botón flotante de WhatsApp y preloader.
+ */
+import '@/styles/global.css';
+import { SITE, absoluta } from '@/config/site';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import BotonWhatsApp from '@/components/BotonWhatsApp.astro';
+import Preloader from '@/components/Preloader.astro';
+
+export interface Props {
+  /** Título de la página (se le agrega " | Nombre de la empresa"). */
+  title: string;
+  /** Meta description (idealmente 120-160 caracteres). */
+  description?: string;
+  /** Ruta de la imagen Open Graph (absoluta o relativa a /public). */
+  ogImage?: string;
+  /** Tipo Open Graph. */
+  ogType?: 'website' | 'article';
+  /** Evita la indexación (p. ej. páginas legales secundarias). */
+  noindex?: boolean;
+  /** JSON-LD adicional específico de la página (se inyecta tal cual). */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Si es true, el título se usa tal cual, sin sufijo. */
+  tituloCompleto?: boolean;
+}
+
+const {
+  title,
+  description = SITE.descripcion,
+  ogImage = '/og-default.jpg',
+  ogType = 'website',
+  noindex = false,
+  jsonLd,
+  tituloCompleto = false,
+} = Astro.props;
+
+const tituloFinal = tituloCompleto ? title : `${title} | ${SITE.nombreCorto}`;
+const canonical = new URL(Astro.url.pathname, SITE.url).toString();
+const ogImageAbs = ogImage.startsWith('http') ? ogImage : absoluta(ogImage);
+const sedePrincipal = SITE.sedes[0];
+
+// JSON-LD de la organización / negocio local (Schema.org)
+const organizacion = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE.url}/#organizacion`,
+  name: SITE.nombre,
+  alternateName: SITE.nombreCorto,
+  url: SITE.url,
+  logo: absoluta('/favicon.png'),
+  image: ogImageAbs,
+  description: SITE.descripcion,
+  slogan: SITE.eslogan,
+  foundingDate: String(SITE.anioFundacion),
+  telephone: SITE.telefonos[0],
+  email: SITE.emails[0],
+  ...(SITE.ruc ? { taxID: SITE.ruc } : {}),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: sedePrincipal.direccion,
+    addressLocality: sedePrincipal.ciudad,
+    addressCountry: sedePrincipal.pais,
+  },
+  ...(sedePrincipal.coordenadas
+    ? {
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: sedePrincipal.coordenadas.lat,
+          longitude: sedePrincipal.coordenadas.lng,
+        },
+      }
+    : {}),
+  sameAs: SITE.redes.map((r) => r.url),
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      telephone: `+${SITE.whatsapp.numero}`,
+      contactType: 'sales',
+      availableLanguage: ['es'],
+    },
+  ],
+};
+
+const jsonLdExtra = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang={SITE.idioma}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{tituloFinal}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={SITE.keywords.join(', ')} />
+    <meta name="author" content={SITE.nombre} />
+    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow" />}
+    <meta name="theme-color" content="#003a6b" />
+
+    <!-- Iconos -->
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.nombreCorto} />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:title" content={tituloFinal} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE.nombreCorto} — ${SITE.eslogan}`} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={tituloFinal} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbs} />
+
+    <!-- JSON-LD (datos estructurados) -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizacion)} />
+    {jsonLdExtra.map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
+
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-fondo text-tinta">
+    <Preloader />
+
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-marca focus:bg-primario focus:px-4 focus:py-2 focus:text-white"
+    >
+      Saltar al contenido principal
+    </a>
+
+    <Header />
+
+    <main id="contenido" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+    <BotonWhatsApp />
+
+    <script>
+      // Animación de aparición al hacer scroll (IntersectionObserver, sin librerías)
+      const elementos = document.querySelectorAll<HTMLElement>('.revelar');
+      if ('IntersectionObserver' in window && elementos.length) {
+        const observer = new IntersectionObserver(
+          (entradas) => {
+            for (const e of entradas) {
+              if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        );
+        elementos.forEach((el) => observer.observe(el));
+      } else {
+        elementos.forEach((el) => el.classList.add('visible'));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+---
+/**
+ * Página 404 — no encontrada.
+ */
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SITE } from '@/config/site';
+---
+
+<BaseLayout title="Página no encontrada" description="La página que buscas no existe." noindex>
+  <section class="seccion fondo-hex">
+    <div class="contenedor max-w-xl py-16 text-center">
+      <p class="font-titulo text-7xl font-extrabold text-primario-200">404</p>
+      <h1 class="mt-4 font-titulo text-3xl font-bold text-primario-800">Página no encontrada</h1>
+      <p class="mt-4 leading-relaxed text-tinta-suave">
+        Lo sentimos, la página que buscas no existe o fue movida. Puedes volver al inicio o
+        explorar nuestros servicios.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href="/" class="btn btn-primario">
+          <Icon name="mdi:home-outline" class="size-5" aria-hidden="true" />
+          Ir al inicio
+        </a>
+        <a href="/servicios/" class="btn btn-contorno">Ver servicios</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

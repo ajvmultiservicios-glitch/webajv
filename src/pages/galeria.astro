@@ -1,0 +1,28 @@
+---
+/**
+ * Galería de fotos en mosaico compacto con filtros por categoría y lightbox.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Galeria from '@/components/Galeria.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { SITE } from '@/config/site';
+---
+
+<BaseLayout
+  title="Galería"
+  description={`Galería de trabajos de ${SITE.nombre}: fabricación de estructuras, blindaje de componentes mineros, montaje de coberturas y mecanizado.`}
+>
+  <PageHeader
+    titulo="Galería de trabajos"
+    descripcion="Una muestra de nuestros proyectos de fabricación, montaje, reparación y mecanizado."
+  />
+
+  <section class="seccion fondo-hex">
+    <div class="contenedor">
+      <Galeria />
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

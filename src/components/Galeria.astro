@@ -1,0 +1,92 @@
+---
+/**
+ * Galería completa en cuadrícula con filtro por categoría y lightbox.
+ * Las fotos provienen de SITE.galeria (archivos en src/assets/galeria/).
+ */
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { SITE } from '@/config/site';
+import Lightbox from '@/components/Lightbox.astro';
+
+const id = 'galeria';
+const archivos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/galeria/*.{jpg,jpeg,png,webp,avif}');
+const fotos = await Promise.all(
+  SITE.galeria.map(async (f) => {
+    const cargar = archivos[`/src/assets/galeria/${f.archivo}`];
+    if (!cargar) return null;
+    return { ...f, src: (await cargar()).default };
+  }),
+).then((lista) => lista.filter((f): f is NonNullable<typeof f> => f !== null));
+
+const categorias = ['Todas', ...new Set(fotos.map((f) => f.categoria))];
+---
+
+<div data-galeria>
+  <!-- Filtros -->
+  <div class="mb-8 flex flex-wrap justify-center gap-2" role="group" aria-label="Filtrar por categoría">
+    {categorias.map((c, i) => (
+      <button
+        type="button"
+        data-filtro={c}
+        aria-pressed={i === 0 ? 'true' : 'false'}
+        class="rounded-full border border-borde px-4 py-1.5 text-sm font-semibold text-tinta-suave transition-colors hover:border-primario-300 hover:text-primario-700 aria-pressed:border-primario-700 aria-pressed:bg-primario-700 aria-pressed:text-white"
+      >
+        {c}
+      </button>
+    ))}
+  </div>
+
+  <ul class="grid grid-flow-dense grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
+    {fotos.map((f, i) => (
+      <li data-categoria={f.categoria} class:list={['revelar', i % 5 === 0 && 'col-span-2 row-span-2']}>
+        <button
+          type="button"
+          class="group relative block aspect-square h-full w-full overflow-hidden bg-primario-50"
+          data-lightbox={id}
+          data-indice={i}
+          aria-label={`Ampliar foto: ${f.alt}`}
+        >
+          <Image
+            src={f.src}
+            alt={f.alt}
+            width={600}
+            height={600}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <span class="absolute inset-0 flex items-center justify-center bg-primario-900/0 transition-colors group-hover:bg-primario-900/50 group-focus-visible:bg-primario-900/50">
+            <Icon name="mdi:magnify-plus-outline" class="size-10 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true" />
+          </span>
+          <span class="absolute bottom-2 left-2 rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-bold text-primario-700">{f.categoria}</span>
+        </button>
+      </li>
+    ))}
+  </ul>
+
+  <p class="mt-8 hidden text-center text-tinta-suave" data-vacio>No hay fotos en esta categoría.</p>
+
+  <Lightbox id={id} fotos={fotos.map((f) => ({ src: f.src, alt: f.alt }))} />
+</div>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-galeria]');
+  if (raiz) {
+    const botones = raiz.querySelectorAll<HTMLButtonElement>('[data-filtro]');
+    const items = raiz.querySelectorAll<HTMLElement>('[data-categoria]');
+    const vacio = raiz.querySelector<HTMLElement>('[data-vacio]');
+    botones.forEach((b) =>
+      b.addEventListener('click', () => {
+        const filtro = b.dataset.filtro;
+        botones.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+        let visibles = 0;
+        items.forEach((it) => {
+          const ver = filtro === 'Todas' || it.dataset.categoria === filtro;
+          it.classList.toggle('hidden', !ver);
+          if (ver) visibles++;
+        });
+        vacio?.classList.toggle('hidden', visibles > 0);
+      }),
+    );
+  }
+</script>

@@ -1,0 +1,144 @@
+---
+/**
+ * Cabecera sticky con barra superior de contacto, logo, navegación
+ * de escritorio y menú móvil accesible (botón hamburguesa).
+ */
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import { SITE, WHATSAPP_URL } from '@/config/site';
+import logo from '@/assets/logo-icono.png';
+
+const rutaActual = Astro.url.pathname;
+const esActiva = (href: string) =>
+  href === '/' ? rutaActual === '/' : rutaActual.startsWith(href);
+---
+
+<header class="sticky top-0 z-50 bg-fondo-oscuro/95 backdrop-blur shadow-md shadow-black/20" id="header">
+  <!-- Barra superior de contacto (solo escritorio) -->
+  <div class="hidden bg-white text-gray-700 text-sm lg:block">
+    <div class="contenedor flex items-center justify-between py-1.5">
+      <ul class="flex items-center gap-6">
+        <li>
+          <a href={`tel:${SITE.telefonos[0].replace(/[^\d+]/g, '')}`} class="inline-flex items-center gap-1.5 hover:text-primario-700">
+            <Icon name="mdi:phone" class="size-4" aria-hidden="true" />
+            {SITE.telefonos[0]}
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${SITE.emails[0]}`} class="inline-flex items-center gap-1.5 hover:text-primario-700">
+            <Icon name="mdi:email-outline" class="size-4" aria-hidden="true" />
+            {SITE.emails[0]}
+          </a>
+        </li>
+        <li class="inline-flex items-center gap-1.5 text-gray-500">
+          <Icon name="mdi:clock-outline" class="size-4" aria-hidden="true" />
+          {SITE.sedes[0].horario}
+        </li>
+      </ul>
+      <ul class="flex items-center gap-3" aria-label="Redes sociales">
+        {SITE.redes.map((r) => (
+          <li>
+            <a href={r.url} target="_blank" rel="noopener noreferrer" aria-label={r.nombre} class="inline-flex hover:text-primario-700">
+              <Icon name={r.icono} class="size-4" aria-hidden="true" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Barra principal -->
+  <div class="contenedor flex items-center justify-between gap-4 py-3">
+    <a href="/" class="flex items-center gap-2 shrink-0" aria-label={`${SITE.nombreCorto} — Inicio`}>
+      <Image src={logo} alt={`Logo de ${SITE.nombreCorto}`} width={180} height={49} densities={[1, 2, 3]} quality={90} class="h-10 w-auto sm:h-12" loading="eager" />
+    </a>
+
+    <nav class="hidden lg:block" aria-label="Navegación principal">
+      <ul class="flex items-center gap-1">
+        {SITE.navegacion.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={esActiva(item.href) ? 'page' : undefined}
+              class:list={[
+                'px-3 py-2 rounded-marca text-sm font-semibold font-titulo transition-colors',
+                esActiva(item.href)
+                  ? 'text-secundario-400 bg-white/10'
+                  : 'text-white hover:text-secundario-300 hover:bg-white/10',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="btn btn-secundario hidden sm:inline-flex !py-2.5">
+        <Icon name="mdi:whatsapp" class="size-5" aria-hidden="true" />
+        Cotiza ahora
+      </a>
+      <button
+        type="button"
+        id="btn-menu"
+        class="lg:hidden inline-flex items-center justify-center size-11 rounded-marca text-white hover:bg-white/10"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="menu-movil"
+      >
+        <Icon name="mdi:menu" class="size-7 icono-abrir" aria-hidden="true" />
+        <Icon name="mdi:close" class="size-7 icono-cerrar hidden" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Menú móvil -->
+  <nav id="menu-movil" class="lg:hidden hidden border-t border-white/10 bg-fondo-oscuro" aria-label="Navegación móvil">
+    <ul class="contenedor flex flex-col py-2">
+      {SITE.navegacion.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            aria-current={esActiva(item.href) ? 'page' : undefined}
+            class:list={[
+              'block px-3 py-3 rounded-marca font-semibold font-titulo',
+              esActiva(item.href) ? 'text-secundario-400 bg-white/10' : 'text-white hover:bg-white/10',
+            ]}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+      <li class="px-3 pt-2 pb-3">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="btn btn-secundario w-full">
+          <Icon name="mdi:whatsapp" class="size-5" aria-hidden="true" />
+          Cotiza por WhatsApp
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const boton = document.getElementById('btn-menu');
+  const menu = document.getElementById('menu-movil');
+  if (boton && menu) {
+    const abrir = boton.querySelector('.icono-abrir');
+    const cerrar = boton.querySelector('.icono-cerrar');
+    const alternar = (forzar?: boolean) => {
+      const abierto = forzar ?? menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !abierto);
+      abrir?.classList.toggle('hidden', abierto);
+      cerrar?.classList.toggle('hidden', !abierto);
+      boton.setAttribute('aria-expanded', String(abierto));
+      boton.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
+    };
+    boton.addEventListener('click', () => alternar());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('hidden')) alternar(false);
+    });
+    // Cierra el menú al pasar a escritorio
+    matchMedia('(min-width: 64rem)').addEventListener('change', (e) => e.matches && alternar(false));
+  }
+</script>

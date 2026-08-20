@@ -1,0 +1,55 @@
+---
+/**
+ * Franja de cifras con contador animado (se anima al entrar en pantalla).
+ * Los datos provienen de SITE.cifras.
+ */
+import { Icon } from 'astro-icon/components';
+import { SITE } from '@/config/site';
+---
+
+<section class="bg-primario-700 text-white" aria-label="Cifras de la empresa">
+  <div class="contenedor grid grid-cols-2 gap-8 py-12 lg:grid-cols-4 lg:py-16">
+    {SITE.cifras.map((c) => (
+      <div class="revelar flex flex-col items-center text-center">
+        <Icon name={c.icono} class="size-9 text-secundario-400" aria-hidden="true" />
+        <p class="mt-3 font-titulo text-4xl font-extrabold tabular-nums sm:text-5xl">
+          <span class="contador" data-valor={c.valor}>0</span>{c.sufijo ?? ''}
+        </p>
+        <p class="mt-1 text-sm font-medium text-white/80 sm:text-base">{c.etiqueta}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const contadores = document.querySelectorAll<HTMLElement>('.contador');
+  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const animar = (el: HTMLElement) => {
+    const fin = Number(el.dataset.valor ?? 0);
+    if (reducir) { el.textContent = String(fin); return; }
+    const duracion = 1800;
+    const inicio = performance.now();
+    const paso = (ahora: number) => {
+      const p = Math.min((ahora - inicio) / duracion, 1);
+      const suavizado = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(fin * suavizado));
+      if (p < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  };
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (e.isIntersecting) {
+          animar(e.target as HTMLElement);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    contadores.forEach((c) => obs.observe(c));
+  } else {
+    contadores.forEach((c) => (c.textContent = c.dataset.valor ?? '0'));
+  }
+</script>

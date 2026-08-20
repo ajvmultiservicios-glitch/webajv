@@ -1,0 +1,278 @@
+/* =====================================================================
+   ESTILOS GLOBALES — tokens de marca con Tailwind CSS v4 (@theme)
+   Cambia aquí los colores, fuentes y radios de la marca.
+   ===================================================================== */
+
+/* Fuentes locales (@fontsource) — sin Google Fonts remoto */
+/* Kanit (similar a Hackman Heavy Italic, la fuente del logo) para títulos */
+@import '@fontsource/kanit/600.css';
+@import '@fontsource/kanit/700.css';
+@import '@fontsource/kanit/700-italic.css';
+@import '@fontsource/kanit/800-italic.css';
+@import '@fontsource/kanit/900-italic.css';
+@import '@fontsource/montserrat/600.css';
+@import '@fontsource/montserrat/700.css';
+@import '@fontsource/montserrat/800.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+
+@import 'tailwindcss';
+
+@theme {
+  /* ---- Colores de marca ------------------------------------------ */
+  /* TODO: reemplazar por los colores de marca reales */
+  --color-primario-50: #e8f2fb;
+  --color-primario-100: #cbe2f6;
+  --color-primario-200: #9cc8ec;
+  --color-primario-300: #66a9df;
+  --color-primario-400: #3389cf;
+  --color-primario-500: #0d70bd;
+  --color-primario-600: #0060ad;
+  --color-primario-700: #004c8c; /* color primario principal */
+  --color-primario-800: #003a6b;
+  --color-primario-900: #002347;
+  --color-primario: var(--color-primario-700);
+
+  --color-secundario-50: #fff9e5;
+  --color-secundario-100: #fff0bf;
+  --color-secundario-200: #ffe38a;
+  --color-secundario-300: #ffd852;
+  --color-secundario-400: #fdcd24;
+  --color-secundario-500: #fcc300; /* color secundario principal (acento) */
+  --color-secundario-600: #d9a600;
+  --color-secundario-700: #b08600;
+  --color-secundario-800: #876600;
+  --color-secundario-900: #5e4700;
+  --color-secundario: var(--color-secundario-500);
+
+  /* Neutros */
+  --color-tinta: #1a202c;       /* texto principal */
+  --color-tinta-suave: #4a5568; /* texto secundario */
+  --color-fondo: #ffffff;
+  --color-fondo-suave: #f5f7fa; /* secciones alternas claras */
+  --color-fondo-oscuro: #3d444b; /* gris medio del brochure (footer) */
+  --color-superficie: #ffffff;  /* tarjetas */
+  --color-borde: #e2e8f0;
+
+  /* ---- Tipografías ------------------------------------------------ */
+  /* Kanit: la alternativa libre más cercana a Hackman Heavy Italic (logo) */
+  --font-titulo: 'Kanit', 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-texto: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Radios ----------------------------------------------------- */
+  --radius-marca: 0.75rem;
+  --radius-marca-lg: 1.25rem;
+
+  /* ---- Animaciones ------------------------------------------------ */
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ---- Base ------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    font-family: var(--font-texto);
+    color: var(--color-tinta);
+    background-color: var(--color-fondo);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-titulo);
+    /* Estilo del logo: pesado e itálico (Hackman Heavy Italic ~ Kanit Black Italic) */
+    font-weight: 800;
+    font-style: italic;
+    line-height: 1.15;
+    letter-spacing: 0;
+    color: var(--color-primario-800);
+  }
+  /* Foco visible y accesible en todos los elementos interactivos */
+  :focus-visible {
+    outline: 3px solid var(--color-secundario-500);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background-color: var(--color-secundario-200);
+    color: #1a202c;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---- Utilidades / componentes reutilizables ------------------------- */
+@utility contenedor {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) { padding-inline: 1.5rem; }
+  @media (width >= 64rem) { padding-inline: 2rem; }
+}
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-marca);
+  font-family: var(--font-titulo);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+  &:hover { transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+}
+@utility btn-primario {
+  background-color: var(--color-primario-700);
+  color: #fff;
+  &:hover { background-color: var(--color-primario-800); box-shadow: 0 8px 20px -8px rgb(0 76 140 / 0.6); }
+}
+@utility btn-secundario {
+  background-color: var(--color-secundario-500);
+  color: var(--color-primario-900);
+  &:hover { background-color: var(--color-secundario-400); box-shadow: 0 8px 20px -8px rgb(252 195 0 / 0.6); }
+}
+@utility btn-contorno {
+  border: 2px solid currentColor;
+  color: var(--color-primario-700);
+  background: transparent;
+  &:hover { background-color: var(--color-primario-50); }
+}
+@utility btn-contorno-claro {
+  border: 2px solid rgb(255 255 255 / 0.7);
+  color: #fff;
+  background: transparent;
+  &:hover { background-color: rgb(255 255 255 / 0.12); }
+}
+
+/* Esquina superior derecha cortada en diagonal (estética industrial) */
+@utility esquina-cortada {
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%);
+}
+
+@utility tarjeta {
+  position: relative;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0;
+  /* Esquina cortada con "doblez" amarillo — guiño al estilo industrial del brochure */
+  clip-path: polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%);
+  transition: transform 0.25s, border-color 0.25s, background-color 0.25s;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--color-secundario-500);
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-primario-400);
+  }
+}
+
+@utility seccion {
+  padding-block: 4rem;
+  @media (width >= 64rem) { padding-block: 6rem; }
+}
+
+/* ---- Identidad del brochure: hexágonos y bandas diagonales ---------- */
+
+/* Marco hexagonal para fotos (motivo principal del brochure) */
+@utility hexagono {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  aspect-ratio: 0.9;
+  object-fit: cover;
+}
+
+/* Sección con cortes diagonales arriba y abajo */
+@utility banda-diagonal {
+  position: relative;
+  z-index: 1; /* por encima de las secciones vecinas */
+  clip-path: polygon(0 3rem, 100% 0, 100% calc(100% - 3rem), 0 100%);
+  padding-block: 7rem;
+  /* Se superpone 3rem a las secciones vecinas para que el color de estas
+     rellene las cuñas del corte diagonal (sin franjas blancas). */
+  margin-block: -3rem;
+  @media (width >= 64rem) { padding-block: 9rem; }
+}
+
+/* Patrón sutil de hexágonos para fondos claros */
+@utility fondo-hex {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='80' viewBox='0 0 72 80'%3E%3Cpath d='M36 4 L64 20 L64 52 L36 68 L8 52 L8 20 Z' fill='none' stroke='%23003a6b' stroke-opacity='0.06' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: 72px 80px;
+}
+
+/* Patrón de hexágonos para fondos oscuros */
+@utility fondo-hex-claro {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='80' viewBox='0 0 72 80'%3E%3Cpath d='M36 4 L64 20 L64 52 L36 68 L8 52 L8 20 Z' fill='none' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: 72px 80px;
+}
+
+/* Tipografía para contenido Markdown (servicios, políticas) */
+@utility prosa {
+  max-width: 72ch;
+  line-height: 1.75;
+  color: var(--color-tinta-suave);
+  & h2 { margin-top: 2.25rem; margin-bottom: 0.75rem; font-size: 1.5rem; }
+  & h3 { margin-top: 1.75rem; margin-bottom: 0.5rem; font-size: 1.2rem; }
+  & p { margin-bottom: 1rem; }
+  & ul, & ol { margin: 0 0 1rem 1.5rem; }
+  & ul { list-style: disc; }
+  & ol { list-style: decimal; }
+  & li { margin-bottom: 0.35rem; }
+  & li::marker { color: var(--color-secundario-500); }
+  & a { color: var(--color-primario-600); text-decoration: underline; text-underline-offset: 3px; }
+  & a:hover { color: var(--color-primario-800); }
+  & strong { color: var(--color-tinta); font-weight: 600; }
+  & blockquote {
+    border-left: 4px solid var(--color-secundario-500);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+  }
+  & table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.95rem; }
+  & th, & td { border: 1px solid var(--color-borde); padding: 0.6rem 0.8rem; text-align: left; }
+  & th { background: var(--color-fondo-suave); color: var(--color-tinta); }
+}
+
+/* Animación de aparición al hacer scroll (controlada por un pequeño script en BaseLayout) */
+.revelar {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.revelar.visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .revelar { opacity: 1; transform: none; }
+}

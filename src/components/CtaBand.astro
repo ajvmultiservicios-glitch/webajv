@@ -1,0 +1,35 @@
+---
+/** Franja de llamado a la acción (cotización) reutilizable al final de las páginas. */
+import { Icon } from 'astro-icon/components';
+import { SITE, WHATSAPP_URL } from '@/config/site';
+
+export interface Props {
+  titulo?: string;
+  descripcion?: string;
+}
+const {
+  titulo = '¿Listo para empezar tu proyecto?',
+  descripcion = 'Cuéntanos qué necesitas y recibe una cotización sin compromiso en menos de 24 horas.',
+} = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden bg-primario-800 text-white">
+  <div class="absolute -right-24 -top-24 size-72 rounded-full bg-secundario-500/20 blur-3xl" aria-hidden="true"></div>
+  <div class="absolute -bottom-24 -left-24 size-72 rounded-full bg-primario-400/20 blur-3xl" aria-hidden="true"></div>
+  <div class="contenedor revelar flex flex-col items-center gap-6 py-16 text-center lg:flex-row lg:justify-between lg:text-left">
+    <div class="max-w-2xl">
+      <h2 class="text-3xl !text-secundario-400 sm:text-4xl">{titulo}</h2>
+      <p class="mt-3 text-lg text-white/80">{descripcion}</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="btn btn-secundario">
+        <Icon name="mdi:whatsapp" class="size-5" aria-hidden="true" />
+        WhatsApp
+      </a>
+      <a href={`tel:${SITE.telefonos[0].replace(/[^\d+]/g, '')}`} class="btn btn-contorno-claro">
+        <Icon name="mdi:phone" class="size-5" aria-hidden="true" />
+        {SITE.telefonos[0]}
+      </a>
+    </div>
+  </div>
+</section>
