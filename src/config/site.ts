@@ -388,8 +388,12 @@ export const SITE: SiteConfig = {
     },
   ],
 
-  // TODO: clientes reales (coloca los logos en src/assets/clientes/ y referencia el archivo)
-  clientes: [],
+  clientes: [
+    { nombre: 'HP&K', logo: 'hpk.png' },
+    { nombre: 'ICC Repuestos, Equipos y Servicios', logo: 'icc.png' },
+    { nombre: 'Unimaq — The Cat Rental Store (Ferreycorp)', logo: 'unimaq.png' },
+    { nombre: 'Metso', logo: 'metso.png' },
+  ],
 
   galeria: [
     { archivo: 'soldadura-estructuras.jpg', alt: 'Soldador de AJV fabricando estructura metálica', categoria: 'Fabricación' },

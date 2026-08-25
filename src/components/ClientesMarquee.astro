@@ -15,8 +15,13 @@ const clientes = await Promise.all(
     return { ...c, src: cargar ? (await cargar()).default : null };
   }),
 );
-// Se duplica la lista para que el desplazamiento sea continuo
-const lista = [...clientes, ...clientes];
+// La animación desplaza -50%, así que la pista debe ser exactamente dos copias
+// de un mismo grupo base. Con pocos logos, el grupo base se repite hasta tener
+// al menos 12 elementos para que llene pantallas anchas sin huecos.
+const MINIMO = 12;
+const repeticiones = Math.max(1, Math.ceil(MINIMO / clientes.length));
+const grupo = Array.from({ length: repeticiones }, () => clientes).flat();
+const lista = [...grupo, ...grupo];
 ---
 
 <div class="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
