@@ -1,7 +1,7 @@
 ---
 /**
- * Página "Nosotros": quiénes somos, misión/visión, valores, historia y CTA.
- * (La sección de personal vive en /equipo/.)
+ * Página "Nosotros": quiénes somos, misión/visión, nuestro equipo humano,
+ * disciplinas, valores, historia y CTA. (La maquinaria vive en /equipo/.)
  */
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
@@ -12,7 +12,20 @@ import StatsBand from '@/components/StatsBand.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import { SITE } from '@/config/site';
 import nosotrosImg from '@/assets/nosotros.jpg';
+import equipoImg from '@/assets/galeria/soldadura-estructuras.jpg';
 
+/** Disciplinas / áreas de especialización que cubre la empresa. */
+const areas = [
+  { nombre: 'Seguridad', icono: 'mdi:shield-check-outline' },
+  { nombre: 'Mantenimiento', icono: 'mdi:wrench-outline' },
+  { nombre: 'Procesos', icono: 'mdi:chart-timeline-variant' },
+  { nombre: 'Mecánica', icono: 'mdi:cog-outline' },
+  { nombre: 'Eléctrica', icono: 'mdi:lightning-bolt-outline' },
+  { nombre: 'Instrumentación', icono: 'mdi:gauge' },
+  { nombre: 'Contratos', icono: 'mdi:file-sign' },
+  { nombre: 'Control de proyectos', icono: 'mdi:clipboard-check-outline' },
+  { nombre: 'Ingeniería civil', icono: 'mdi:office-building-outline' },
+];
 ---
 
 <BaseLayout
@@ -76,6 +89,70 @@ import nosotrosImg from '@/assets/nosotros.jpg';
         <Icon name="mdi:eye-outline" class="size-12 text-secundario-500" aria-hidden="true" />
         <h2 class="mt-4 text-2xl font-bold">Visión</h2>
         <p class="mt-3 leading-relaxed text-tinta-suave">{SITE.vision}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nuestro equipo humano -->
+  <section class="seccion fondo-hex">
+    <div class="contenedor grid items-center gap-12 lg:grid-cols-2">
+      <div class="revelar">
+        <SectionHeading
+          etiqueta="Nuestro equipo"
+          titulo="Expertos que garantizan el resultado"
+          alinear="izquierda"
+        />
+        <div class="mt-6 space-y-4 leading-relaxed text-tinta-suave">
+          <p>
+            Disponemos de un equipo de expertos muy capacitados en las áreas de la
+            <strong>planta de concentración, operaciones y mantenimiento mecánico</strong>,
+            con conocimiento en las diversas disciplinas en las que trabajamos y en las
+            principales empresas mineras del país.
+          </p>
+          <p>
+            Nuestro grupo de colaboradores posee una <strong>alta calificación</strong>,
+            lo que asegura el buen resultado de cada proyecto, cumpliendo con todos los
+            parámetros y requisitos de evaluación, seguridad laboral y supervisión de calidad.
+          </p>
+          <p>
+            Nuestro personal es lo más valioso que tenemos y ponemos todo nuestro empeño
+            en cuidar su salud y bienestar. Por eso mantenemos una meta permanente:
+            <strong>CERO ACCIDENTES</strong> en cada proyecto que ejecutamos.
+          </p>
+        </div>
+      </div>
+      <div class="revelar flex justify-center drop-shadow-2xl">
+        <div class="hexagono w-full max-w-md bg-white p-2.5">
+          <Image
+            src={equipoImg}
+            alt="Soldador calificado de AJV trabajando en una estructura metálica"
+            width={800}
+            height={880}
+            class="hexagono h-full w-full"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Áreas de especialización (banda oscura diagonal) -->
+  <section class="banda-diagonal bg-fondo-oscuro fondo-hex-claro text-white">
+    <div class="contenedor">
+      <SectionHeading
+        etiqueta="Disciplinas"
+        titulo="Áreas de especialización"
+        descripcion="Cubrimos todas las disciplinas necesarias para ejecutar proyectos metalmecánicos completos y seguros."
+        claro
+      />
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {areas.map((a) => (
+          <div class="tarjeta revelar flex items-center gap-4 p-5 text-tinta">
+            <span class="flex size-11 shrink-0 items-center justify-center rounded-marca bg-primario-50 text-primario-700">
+              <Icon name={a.icono} class="size-6" aria-hidden="true" />
+            </span>
+            <span class="font-semibold">{a.nombre}</span>
+          </div>
+        ))}
       </div>
     </div>
   </section>
