@@ -19,6 +19,8 @@ export default defineConfig({
   // La antigua página /proyectos/ se fusionó con /servicios/
   redirects: {
     '/proyectos/': '/servicios/',
+    // La antigua /equipo/ pasó a ser /equipos/ (página de maquinaria)
+    '/equipo/': '/equipos/',
   },
   integrations: [
     sitemap(),

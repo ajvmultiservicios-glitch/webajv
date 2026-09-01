@@ -268,7 +268,7 @@ export const SITE: SiteConfig = {
     { label: 'Nosotros', href: '/nosotros/' },
     { label: 'Servicios', href: '/servicios/' },
     { label: 'Galería', href: '/galeria/' },
-    { label: 'Equipos', href: '/equipo/' },
+    { label: 'Equipos', href: '/equipos/' },
     { label: 'Contacto', href: '/contacto/' },
   ],
 
