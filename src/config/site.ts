@@ -392,7 +392,7 @@ export const SITE: SiteConfig = {
     { nombre: 'HP&K', logo: 'hpk.png' },
     { nombre: 'ICC Repuestos, Equipos y Servicios', logo: 'icc.png' },
     { nombre: 'Unimaq — The Cat Rental Store (Ferreycorp)', logo: 'unimaq.png' },
-    { nombre: 'Metso', logo: 'metso.png' },
+    { nombre: 'MMG Las Bambas', logo: 'mmg-las-bambas.png' },
   ],
 
   galeria: [
