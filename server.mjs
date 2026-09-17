@@ -14,7 +14,7 @@ import handler from 'serve-handler';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
 // Dominio canónico (puedes sobreescribirlo con la variable SITE_URL en Railway)
-const SITE_URL = process.env.SITE_URL || 'https://www.ajvingenieria.com';
+const SITE_URL = process.env.SITE_URL || 'https://www.ajvmultiservicios.com';
 const canonicalHost = new URL(SITE_URL).host;
 
 const server = http.createServer((req, res) => {

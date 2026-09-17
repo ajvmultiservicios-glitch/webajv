@@ -208,7 +208,7 @@ export const SITE: SiteConfig = {
   nombreCorto: 'AJV',
   sigla: 'AJV',
   // TODO: confirmar dominio final (se asume el de los correos del brochure)
-  url: 'https://www.ajvingenieria.com',
+  url: 'https://www.ajvmultiservicios.com',
   eslogan: 'Ingeniería, fabricación y montaje metalmecánico para la industria y la minería',
   lema: 'Calidad, costo y tiempo, garantizando CERO ACCIDENTES.',
   descripcion:
