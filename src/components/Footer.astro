@@ -5,7 +5,7 @@
  */
 import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
-import { SITE, WHATSAPP_URL } from '@/config/site';
+import { SITE, WHATSAPP_URL, telHref } from '@/config/site';
 import logoBlanco from '@/assets/logo.png';
 
 const anio = new Date().getFullYear();
@@ -69,17 +69,21 @@ const sede = SITE.sedes[0];
       </nav>
 
       <!-- Contacto -->
-      <address class="not-italic">
-        <h2 class="font-titulo text-base font-bold !text-secundario-400 uppercase tracking-wide">Contacto</h2>
+      <address class="not-italic" itemscope itemtype="https://schema.org/LocalBusiness" aria-labelledby="footer-contacto-titulo">
+        <meta itemprop="name" content={SITE.nombre} />
+        <meta itemprop="url" content={SITE.url} />
+        <h2 id="footer-contacto-titulo" class="font-titulo text-base font-bold !text-secundario-400 uppercase tracking-wide">Contacto</h2>
         <ul class="mt-4 space-y-3 text-sm">
-          <li class="flex gap-2">
+          <li class="flex gap-2" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
             <Icon name="mdi:map-marker-outline" class="size-5 shrink-0 text-secundario-400" aria-hidden="true" />
-            <span>{sede.direccion}, {sede.ciudad}, {sede.pais}</span>
+            <span>
+              <span itemprop="streetAddress">{sede.direccion}</span>, <span itemprop="addressLocality">{sede.ciudad}</span>, <span itemprop="addressCountry">{sede.pais}</span>
+            </span>
           </li>
-          {SITE.telefonos.map((t) => (
+          {SITE.telefonos.map((t, i) => (
             <li class="flex gap-2">
               <Icon name="mdi:phone-outline" class="size-5 shrink-0 text-secundario-400" aria-hidden="true" />
-              <a href={`tel:${t.replace(/[^\d+]/g, '')}`} class="hover:text-secundario-300">{t}</a>
+              <a href={telHref(t)} itemprop="telephone" class="hover:text-secundario-300" aria-label={`Llamar al teléfono ${i + 1}: ${t}`}>{t}</a>
             </li>
           ))}
           <li class="flex gap-2">
@@ -89,7 +93,7 @@ const sede = SITE.sedes[0];
           {SITE.emails.map((e) => (
             <li class="flex gap-2">
               <Icon name="mdi:email-outline" class="size-5 shrink-0 text-secundario-400" aria-hidden="true" />
-              <a href={`mailto:${e}`} class="hover:text-secundario-300 break-all">{e}</a>
+              <a href={`mailto:${e}`} itemprop="email" class="hover:text-secundario-300 break-all" aria-label={`Escribir a ${e}`}>{e}</a>
             </li>
           ))}
           <li class="flex gap-2">

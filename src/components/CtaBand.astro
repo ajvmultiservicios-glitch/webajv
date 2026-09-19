@@ -1,7 +1,7 @@
 ---
 /** Franja de llamado a la acción (cotización) reutilizable al final de las páginas. */
 import { Icon } from 'astro-icon/components';
-import { SITE, WHATSAPP_URL } from '@/config/site';
+import { SITE, WHATSAPP_URL, telHref } from '@/config/site';
 
 export interface Props {
   titulo?: string;
@@ -26,7 +26,7 @@ const {
         <Icon name="mdi:whatsapp" class="size-5" aria-hidden="true" />
         WhatsApp
       </a>
-      <a href={`tel:${SITE.telefonos[0].replace(/[^\d+]/g, '')}`} class="btn btn-contorno-claro">
+      <a href={telHref(SITE.telefonos[0])} class="btn btn-contorno-claro" aria-label={`Llamar al ${SITE.telefonos[0]}`}>
         <Icon name="mdi:phone" class="size-5" aria-hidden="true" />
         {SITE.telefonos[0]}
       </a>

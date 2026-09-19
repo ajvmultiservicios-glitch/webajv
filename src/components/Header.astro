@@ -5,7 +5,7 @@
  */
 import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
-import { SITE, WHATSAPP_URL } from '@/config/site';
+import { SITE, WHATSAPP_URL, telHref } from '@/config/site';
 import logo from '@/assets/logo-icono.png';
 
 const rutaActual = Astro.url.pathname;
@@ -19,7 +19,7 @@ const esActiva = (href: string) =>
     <div class="contenedor flex items-center justify-between py-1.5">
       <ul class="flex items-center gap-6">
         <li>
-          <a href={`tel:${SITE.telefonos[0].replace(/[^\d+]/g, '')}`} class="inline-flex items-center gap-1.5 hover:text-primario-700">
+          <a href={telHref(SITE.telefonos[0])} class="inline-flex items-center gap-1.5 hover:text-primario-700" aria-label={`Llamar al ${SITE.telefonos[0]}`}>
             <Icon name="mdi:phone" class="size-4" aria-hidden="true" />
             {SITE.telefonos[0]}
           </a>

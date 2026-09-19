@@ -4,7 +4,7 @@
  * (carga diferida con loading="lazy").
  */
 import { Icon } from 'astro-icon/components';
-import type { Sede } from '@/config/site';
+import { telHref, type Sede } from '@/config/site';
 
 export interface Props {
   sede: Sede;
@@ -22,7 +22,7 @@ const { sede } = Astro.props;
       </li>
       <li class="flex gap-3">
         <Icon name="mdi:phone-outline" class="size-6 shrink-0 text-secundario-600" aria-hidden="true" />
-        <a href={`tel:${sede.telefono.replace(/[^\d+]/g, '')}`} class="hover:text-primario-700">{sede.telefono}</a>
+        <a href={telHref(sede.telefono)} class="hover:text-primario-700" aria-label={`Llamar a ${sede.nombre}: ${sede.telefono}`}>{sede.telefono}</a>
       </li>
       <li class="flex gap-3">
         <Icon name="mdi:clock-outline" class="size-6 shrink-0 text-secundario-600" aria-hidden="true" />

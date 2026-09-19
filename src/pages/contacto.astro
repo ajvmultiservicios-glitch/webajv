@@ -7,13 +7,22 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import SedeCard from '@/components/SedeCard.astro';
-import { SITE, WHATSAPP_URL } from '@/config/site';
+import { SITE, WHATSAPP_URL, telHref, telE164 } from '@/config/site';
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
   name: `Contacto — ${SITE.nombre}`,
   url: new URL('/contacto/', SITE.url).toString(),
+  inLanguage: SITE.idioma,
+  about: { '@id': `${SITE.url}/#organizacion` },
+  mainEntity: {
+    '@type': 'Organization',
+    '@id': `${SITE.url}/#organizacion`,
+    name: SITE.nombre,
+    telephone: SITE.telefonos.map(telE164),
+    email: SITE.emails,
+  },
 };
 ---
 
@@ -43,11 +52,15 @@ const jsonLd = {
             </span>
             <div>
               <h3 class="font-semibold">Teléfonos</h3>
-              {SITE.telefonos.map((t) => (
-                <a href={`tel:+51${t.replace(/\s/g, '')}`} class="block text-sm text-tinta-suave hover:text-primario-700">
-                  {t}
-                </a>
-              ))}
+              <ul aria-label="Teléfonos de contacto">
+                {SITE.telefonos.map((t, i) => (
+                  <li>
+                    <a href={telHref(t)} class="block text-sm text-tinta-suave hover:text-primario-700" aria-label={`Llamar al teléfono ${i + 1}: ${t}`}>
+                      {t}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </li>
           <li class="flex items-start gap-4">
@@ -56,11 +69,15 @@ const jsonLd = {
             </span>
             <div>
               <h3 class="font-semibold">Correos</h3>
-              {SITE.emails.map((e) => (
-                <a href={`mailto:${e}`} class="block text-sm text-tinta-suave hover:text-primario-700">
-                  {e}
-                </a>
-              ))}
+              <ul aria-label="Correos de contacto">
+                {SITE.emails.map((e) => (
+                  <li>
+                    <a href={`mailto:${e}`} class="block text-sm text-tinta-suave hover:text-primario-700" aria-label={`Escribir a ${e}`}>
+                      {e}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </li>
           <li class="flex items-start gap-4">
@@ -69,7 +86,7 @@ const jsonLd = {
             </span>
             <div>
               <h3 class="font-semibold">WhatsApp</h3>
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener" class="text-sm text-tinta-suave hover:text-primario-700">
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="text-sm text-tinta-suave hover:text-primario-700" aria-label={`Abrir chat de WhatsApp con ${SITE.nombreCorto}`}>
                 Escríbenos ahora y recibe respuesta inmediata
               </a>
             </div>

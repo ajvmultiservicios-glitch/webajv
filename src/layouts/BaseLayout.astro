@@ -6,7 +6,7 @@
  * botón flotante de WhatsApp y preloader.
  */
 import '@/styles/global.css';
-import { SITE, absoluta } from '@/config/site';
+import { SITE, absoluta, telE164 } from '@/config/site';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import BotonWhatsApp from '@/components/BotonWhatsApp.astro';
@@ -57,8 +57,11 @@ const organizacion = {
   description: SITE.descripcion,
   slogan: SITE.eslogan,
   foundingDate: String(SITE.anioFundacion),
-  telephone: SITE.telefonos[0],
-  email: SITE.emails[0],
+  telephone: SITE.telefonos.map(telE164),
+  email: SITE.emails,
+  areaServed: { '@type': 'Country', name: 'Perú' },
+  currenciesAccepted: 'PEN',
+  priceRange: '$$',
   ...(SITE.ruc ? { taxID: SITE.ruc } : {}),
   address: {
     '@type': 'PostalAddress',
@@ -77,10 +80,19 @@ const organizacion = {
     : {}),
   sameAs: SITE.redes.map((r) => r.url),
   contactPoint: [
+    ...SITE.telefonos.map((t, i) => ({
+      '@type': 'ContactPoint',
+      telephone: telE164(t),
+      contactType: i === 0 ? 'sales' : 'customer service',
+      areaServed: 'PE',
+      availableLanguage: ['es'],
+    })),
     {
       '@type': 'ContactPoint',
       telephone: `+${SITE.whatsapp.numero}`,
       contactType: 'sales',
+      url: `https://wa.me/${SITE.whatsapp.numero}`,
+      areaServed: 'PE',
       availableLanguage: ['es'],
     },
   ],

@@ -232,7 +232,7 @@ export const SITE: SiteConfig = {
   // TODO: RUC real (déjalo como undefined si no quieres mostrarlo)
   ruc: undefined,
 
-  telefonos: ['936 763 532', '987 180 419'],
+  telefonos: ['936 763 532', '987 180 419', '992 467 511'],
   whatsapp: {
     numero: '51936763532',
     mensaje: 'Hola AJV, quisiera información sobre sus servicios metalmecánicos.',
@@ -474,6 +474,23 @@ export const SITE: SiteConfig = {
   // TODO: endpoint de Formspree/Getform u otro (vacío = el formulario abre el correo con mailto)
   formEndpoint: '',
 };
+
+/** Prefijo telefónico internacional del Perú. */
+export const CODIGO_PAIS = '+51';
+
+/**
+ * Convierte un teléfono legible ("936 763 532") a formato E.164 ("+51936763532"),
+ * que es el que Google y los enlaces `tel:` entienden mejor.
+ */
+export function telE164(telefono: string): string {
+  const digitos = telefono.replace(/\D/g, '');
+  return digitos.startsWith('51') && digitos.length > 9 ? `+${digitos}` : `${CODIGO_PAIS}${digitos}`;
+}
+
+/** Enlace `tel:` listo para usar en un <a>. */
+export function telHref(telefono: string): string {
+  return `tel:${telE164(telefono)}`;
+}
 
 /** Enlace directo de WhatsApp ya armado con el mensaje predeterminado. */
 export const WHATSAPP_URL = `https://wa.me/${SITE.whatsapp.numero}?text=${encodeURIComponent(SITE.whatsapp.mensaje)}`;
